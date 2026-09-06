@@ -1,111 +1,836 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Score Predictor — EduPredict</title>
+    <!-- Modern Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Exact Custom Palette */
+        :root {
+            --midnight: #06172E;      /* Primary Deep Background */
+            --blue-slate: #022C50;    /* Card & Surface */
+            --classic-blue: #0F4C81;  /* Structural Borders & Secondary */
+            --blue-gray: #58A1D3;     /* Primary Action & Highlights */
+            --powder-blue: #B3DEF8;   /* Soft Accents & Typography */
+            --white: #FFFFFF;
+            
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(15, 76, 129, 0.5);
+            --glow-accent: 0 0 25px rgba(88, 161, 211, 0.2);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--midnight);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(15, 76, 129, 0.35) 0px, transparent 45%),
+                radial-gradient(at 85% 85%, rgba(2, 44, 80, 0.5) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Top Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 10%;
+            background: rgba(2, 44, 80, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(15, 76, 129, 0.6);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--classic-blue), var(--blue-gray));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(88, 161, 211, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.55rem 1.15rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(15, 76, 129, 0.7);
+            background: rgba(6, 23, 46, 0.4);
+            color: var(--powder-blue);
+        }
+
+        .nav-btn:hover {
+            background: var(--classic-blue);
+            color: var(--white);
+            border-color: var(--blue-gray);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 780px;
+            width: 90%;
+            margin: 2.5rem auto 3rem;
+            flex: 1;
+        }
+
+        /* Result Display Box */
+        {% if results is defined and results is not none %}
+        .result-box {
+            background: var(--blue-slate);
+            border: 1.5px solid var(--blue-gray);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow), var(--glow-accent);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.3rem 0.9rem;
+            background: rgba(88, 161, 211, 0.2);
+            border: 1px solid var(--classic-blue);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--powder-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-title {
+            font-size: 0.95rem;
+            color: var(--powder-blue);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: clamp(3rem, 7vw, 4rem);
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .result-value span {
+            font-size: 1.3rem;
+            color: var(--powder-blue);
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .score-bar-bg {
+            width: 100%;
+            max-width: 420px;
+            height: 10px;
+            background: rgba(6, 23, 46, 0.6);
+            border: 1px solid var(--classic-blue);
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--classic-blue), var(--blue-gray), var(--powder-blue));
+            border-radius: 20px;
+            width: {{ results if results <= 100 else 100 }}%;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        {% endif %}
+
+        /* Form Card */
+        .form-card {
+            background: var(--blue-slate);
+            border: 1px solid var(--classic-blue);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(15, 76, 129, 0.6);
+            padding-bottom: 1.25rem;
+        }
+
+        .form-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.4px;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-desc {
+            font-size: 0.95rem;
+            color: var(--powder-blue);
+            opacity: 0.85;
+        }
+
+        /* Sample Prefill Buttons */
+        .sample-presets {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--powder-blue);
+            opacity: 0.7;
+        }
+
+        .preset-btn {
+            background: rgba(15, 76, 129, 0.3);
+            border: 1px solid var(--classic-blue);
+            color: var(--powder-blue);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: var(--blue-gray);
+            color: var(--midnight);
+            border-color: var(--powder-blue);
+        }
+
+        .form-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--blue-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 1.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--powder-blue);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--midnight);
+            border: 1px solid var(--classic-blue);
+            border-radius: var(--radius-md);
+            color: var(--white);
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B3DEF8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 15px;
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 2.5rem;
+        }
+
+        select option {
+            background-color: var(--blue-slate);
+            color: var(--white);
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--blue-gray);
+            box-shadow: 0 0 0 3px rgba(88, 161, 211, 0.25);
+            background-color: #081d38;
+        }
+
+        .btn-submit {
+            margin-top: 2rem;
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, var(--blue-gray), #458ec2);
+            color: var(--midnight);
+            border: 1px solid var(--powder-blue);
+            border-radius: var(--radius-md);
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(88, 161, 211, 0.35);
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, var(--powder-blue), var(--blue-gray));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(88, 161, 211, 0.5);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 23, 46, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background-color: var(--midnight);
+            border: 1px solid var(--classic-blue);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 860px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), var(--glow-accent);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--classic-blue);
+            background-color: var(--blue-slate);
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: rgba(15, 76, 129, 0.3);
+            border: 1px solid var(--classic-blue);
+            color: var(--powder-blue);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--blue-gray);
+            color: var(--midnight);
+            border-color: var(--powder-blue);
+        }
+
+        .modal-body {
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            text-align: center;
+            background-color: var(--midnight);
+        }
+
+        .svg-diagram-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .svg-diagram {
+            width: 100%;
+            max-width: 720px;
+            height: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 0.88rem;
+            color: var(--powder-blue);
+            opacity: 0.75;
+            border-top: 1px solid var(--classic-blue);
+            background-color: var(--midnight);
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--blue-gray);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--powder-blue);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 680px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full {
+                grid-column: span 1;
+            }
+            .form-card {
+                padding: 1.75rem 1.25rem;
+            }
+            nav {
+                padding: 1rem 5%;
+            }
+        }
+    </style>
+</head>
 <body>
-    <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-   
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <label class="form-label">Gender</label>
-            <select class="form-control" name="gender" placeholder="Enter you Gender" required>
-                <option class="placeholder" selected disabled value="">Select your Gender</option>
-                <option value="male">
-                    Male
-                </option>
-                <option value="female">
-                    Female
-                </option>
-            </select>
+
+    <!-- Simple Navigation -->
+    <nav>
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span>EduPredict</span>
+        </a>
+        <div class="nav-links">
+            <button class="nav-btn" onclick="toggleModal(true)">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Model Architecture</span>
+            </button>
+            <a href="https://github.com/alphacrypto246/Student-Score-Prediction" target="_blank" class="nav-btn">
+                <i class="fa-brands fa-github"></i>
+                <span>GitHub Repo</span>
+            </a>
+            <a href="/" class="nav-btn">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Race or Ethnicity</label>
-            <select class="form-control" name="ethnicity" placeholder="Enter you ethnicity" required>
-                <option class="placeholder" selected disabled value="">Select Ethnicity</option>
-                <option value="group A">
-                    Group A
-                </option>
-                <option value="group B">
-                    Group B
-                </option>
-                <option value="group C">
-                    Group C
-                </option>
-                <option value="group D">
-                    Group D
-                </option>
-                <option value="group E">
-                    Group E
-                </option>
-            </select>
+    </nav>
+
+    <div class="container">
+        
+        <!-- Results Banner if rendered by Flask -->
+        {% if results is defined and results is not none %}
+        <div class="result-box">
+            <div class="result-badge">
+                <i class="fa-solid fa-square-poll-vertical"></i>
+                <span>Prediction Result</span>
+            </div>
+            <div class="result-title">Estimated Student Mathematics Examination Score</div>
+            <div class="result-value">{{ results }} <span>/ 100</span></div>
+            <div class="score-bar-bg">
+                <div class="score-bar-fill"></div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Parental Level of Education</label>
-            <select class="form-control" name="parental_level_of_education"
-                placeholder="Enter you Parent Education" required>
-                <option class="placeholder" selected disabled value="">Select Parent Education</option>
-                <option value="associate's degree">
-                    associate's degree
-                </option>
-                <option value="bachelor's degree">
-                    bachelor's degree
-                </option>
-                <option value="high school">
-                    high school
-                </option>
-                <option value="master's degree">
-                    master's degree
-                </option>
-                <option value="some college">
-                    some college
-                </option>
-                <option value="some high school">
-                    some high school
-                </option>
-            </select>
+        {% endif %}
+
+        <div class="form-card">
+            <div class="form-header">
+                <h1 class="form-title">Student Performance Predictor</h1>
+                <p class="form-desc">Provide student attributes and baseline examination scores to compute predicted math performance.</p>
+                
+                <div class="sample-presets">
+                    <span class="preset-label">Quick Fill:</span>
+                    <button type="button" class="preset-btn" onclick="fillPreset(1)">High Achiever</button>
+                    <button type="button" class="preset-btn" onclick="fillPreset(2)">Average Profile</button>
+                    <button type="button" class="preset-btn" onclick="fillPreset(3)">Needs Support</button>
+                </div>
+            </div>
+
+            <form action="{{ url_for('predict_datapoint') }}" method="POST">
+                
+                <div class="form-section-title">
+                    <i class="fa-solid fa-user" style="font-size: 0.9rem;"></i>
+                    <span>1. Student Demographics</span>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ethnicity">Race / Ethnicity</label>
+                        <select id="ethnicity" name="ethnicity" required>
+                            <option value="" disabled selected>Select Group</option>
+                            <option value="group A">Group A</option>
+                            <option value="group B">Group B</option>
+                            <option value="group C">Group C</option>
+                            <option value="group D">Group D</option>
+                            <option value="group E">Group E</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section-title">
+                    <i class="fa-solid fa-school" style="font-size: 0.9rem;"></i>
+                    <span>2. Academic Background & Preparation</span>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group full">
+                        <label for="parental_level_of_education">Parental Level of Education</label>
+                        <select id="parental_level_of_education" name="parental_level_of_education" required>
+                            <option value="" disabled selected>Select Parent Education Level</option>
+                            <option value="some high school">Some High School</option>
+                            <option value="high school">High School</option>
+                            <option value="some college">Some College</option>
+                            <option value="associate's degree">Associate's Degree</option>
+                            <option value="bachelor's degree">Bachelor's Degree</option>
+                            <option value="master's degree">Master's Degree</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lunch">Lunch Program</label>
+                        <select id="lunch" name="lunch" required>
+                            <option value="" disabled selected>Select Lunch Type</option>
+                            <option value="standard">Standard</option>
+                            <option value="free/reduced">Free / Reduced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test_preparation_course">Test Preparation Course</label>
+                        <select id="test_preparation_course" name="test_preparation_course" required>
+                            <option value="" disabled selected>Select Course Status</option>
+                            <option value="none">None</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section-title">
+                    <i class="fa-solid fa-pen-nib" style="font-size: 0.9rem;"></i>
+                    <span>3. Baseline Test Scores</span>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="reading_score">Reading Score (0 - 100)</label>
+                        <input id="reading_score" type="number" name="reading_score" placeholder="e.g. 75" min="0" max="100" required step="any" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="writing_score">Writing Score (0 - 100)</label>
+                        <input id="writing_score" type="number" name="writing_score" placeholder="e.g. 80" min="0" max="100" required step="any" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Calculate Predicted Math Score</span>
+                </button>
+            </form>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Lunch Type</label>
-            <select class="form-control" name="lunch" placeholder="Enter you Lunch" required>
-                <option class="placeholder" selected disabled value="">Select Lunch Type</option>
-                <option value="free/reduced">
-                    free/reduced
-                </option>
-                <option value="standard">
-                    standard
-                </option>
-            </select>
+    </div>
+
+    <!-- Architecture Modal -->
+    <div id="archModal" class="modal-overlay" onclick="handleBackdropClick(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-diagram-project" style="color: var(--blue-gray);"></i> Model Pipeline Architecture</h2>
+                <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="svg-diagram-container">
+                    <svg class="svg-diagram" viewBox="0 0 680 940" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#58A1D3"/>
+                            </marker>
+                        </defs>
+
+                        <style>
+                            .box { fill: #022C50; stroke: #0F4C81; stroke-width: 1.5; rx: 8; ry: 8; }
+                            .box-highlight { fill: #022C50; stroke: #58A1D3; stroke-width: 2; rx: 8; ry: 8; }
+                            .box-green { fill: #022C50; stroke: #58A1D3; stroke-width: 1.5; rx: 8; ry: 8; }
+                            .txt { fill: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; }
+                            .txt-sub { fill: #B3DEF8; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
+                            .edge { stroke: #58A1D3; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+                            .edge-long { stroke: #0F4C81; stroke-width: 1.75; fill: none; marker-end: url(#arrow); stroke-dasharray: 4 3; }
+                            .edge-lbl-bg { fill: #06172E; stroke: #0F4C81; stroke-width: 1; rx: 6; }
+                            .edge-lbl { fill: #B3DEF8; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+                        </style>
+
+                        <!-- 1. Raw Dataset -->
+                        <rect x="250" y="20" width="180" height="38" class="box"/>
+                        <text x="340" y="39" class="txt">Raw Dataset stud.xlsx</text>
+
+                        <path d="M 340 58 L 340 90" class="edge"/>
+
+                        <!-- 2. Data Ingestion Component -->
+                        <rect x="230" y="90" width="220" height="38" class="box"/>
+                        <text x="340" y="109" class="txt">Data Ingestion Component</text>
+
+                        <path d="M 280 128 L 280 170 L 210 170 L 210 185" class="edge"/>
+                        <rect x="235" y="142" width="75" height="18" class="edge-lbl-bg"/>
+                        <text x="272" y="151" class="edge-lbl">Splits 80/20</text>
+
+                        <path d="M 400 128 L 400 170 L 490 170 L 490 185" class="edge"/>
+
+                        <!-- 3. Artifacts: train/test and raw.csv -->
+                        <rect x="120" y="185" width="180" height="42" class="box"/>
+                        <text x="210" y="206" class="txt">artifacts/train.csv &amp; test.csv</text>
+
+                        <rect x="420" y="185" width="140" height="42" class="box"/>
+                        <text x="490" y="206" class="txt">artifacts/raw.csv</text>
+
+                        <path d="M 210 227 L 210 260 L 340 260 L 340 275" class="edge"/>
+
+                        <!-- 4. Data Transformation Component -->
+                        <rect x="220" y="275" width="240" height="38" class="box"/>
+                        <text x="340" y="294" class="txt">Data Transformation Component</text>
+
+                        <path d="M 270 313 L 270 340 L 190 340 L 190 355" class="edge"/>
+                        <path d="M 410 313 L 410 340 L 490 340 L 490 355" class="edge"/>
+
+                        <!-- Numerical Pipeline Box -->
+                        <rect x="90" y="355" width="200" height="46" class="box"/>
+                        <text x="190" y="371" class="txt-sub">SimpleImputer + StandardScaler</text>
+                        <text x="190" y="388" class="txt">Numerical Pipeline</text>
+
+                        <!-- Categorical Pipeline Box -->
+                        <rect x="390" y="355" width="200" height="46" class="box"/>
+                        <text x="490" y="371" class="txt-sub">SimpleImputer + OneHotEncoder</text>
+                        <text x="490" y="388" class="txt">Categorical Pipeline</text>
+
+                        <path d="M 190 401 L 190 425 L 310 425 L 310 440" class="edge"/>
+                        <path d="M 490 401 L 490 425 L 370 425 L 370 440" class="edge"/>
+
+                        <!-- 5. ColumnTransformer Object -->
+                        <rect x="240" y="440" width="200" height="38" class="box-highlight"/>
+                        <text x="340" y="459" class="txt" fill="#B3DEF8">ColumnTransformer Object</text>
+
+                        <path d="M 260 478 L 260 720 L 220 720 L 220 740" class="edge-long"/>
+                        <path d="M 420 478 L 420 500 L 490 500 L 490 515" class="edge"/>
+
+                        <!-- 6. Transformed Arrays -->
+                        <rect x="390" y="515" width="200" height="44" class="box"/>
+                        <text x="490" y="531" class="txt">Transformed Arrays</text>
+                        <text x="490" y="546" class="txt-sub">train_arr &amp; test_arr</text>
+
+                        <path d="M 490 559 L 490 585" class="edge"/>
+
+                        <!-- 7. Model Trainer Component -->
+                        <rect x="390" y="585" width="200" height="38" class="box"/>
+                        <text x="490" y="604" class="txt">Model Trainer Component</text>
+
+                        <path d="M 490 623 L 490 675" class="edge"/>
+                        <rect x="420" y="638" width="140" height="18" class="edge-lbl-bg"/>
+                        <text x="490" y="647" class="edge-lbl">GridSearchCV Tuning</text>
+
+                        <!-- 8. Model Evaluation Benchmarking -->
+                        <rect x="380" y="675" width="220" height="38" class="box"/>
+                        <text x="490" y="694" class="txt">Model Evaluation Benchmarking</text>
+
+                        <path d="M 490 713 L 490 740" class="edge"/>
+
+                        <!-- 9. Select Best Regressor Model -->
+                        <rect x="380" y="740" width="220" height="38" class="box"/>
+                        <text x="490" y="759" class="txt">Select Best Regressor Model</text>
+
+                        <path d="M 490 778 L 490 805" class="edge"/>
+
+                        <!-- 10. Saved Model and Preprocessor Artifacts -->
+                        <rect x="140" y="740" width="160" height="38" class="box-green"/>
+                        <text x="220" y="759" class="txt" fill="#B3DEF8">artifacts/preprocessor.pkl</text>
+
+                        <rect x="410" y="805" width="160" height="38" class="box-green"/>
+                        <text x="490" y="824" class="txt" fill="#B3DEF8">artifacts/model.pkl</text>
+
+                        <!-- User Input Box on Left -->
+                        <rect x="40" y="805" width="170" height="38" class="box"/>
+                        <text x="125" y="824" class="txt">User Input via Web UI</text>
+
+                        <path d="M 125 843 L 125 870 L 250 870 L 250 885" class="edge"/>
+                        <path d="M 220 778 L 220 860 L 320 860 L 320 885" class="edge"/>
+                        <path d="M 490 843 L 490 870 L 390 870 L 390 885" class="edge"/>
+
+                        <!-- 11. CustomData / Predict Pipeline -->
+                        <rect x="220" y="885" width="240" height="42" class="box-highlight"/>
+                        <text x="340" y="906" class="txt" fill="#B3DEF8">CustomData / Predict Pipeline</text>
+                    </svg>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Test preparation Course</label>
-            <select class="form-control" name="test_preparation_course" placeholder="Enter you Course"
-                required>
-                <option class="placeholder" selected disabled value="">Select Test_course</option>
-                <option value="none">
-                    None
-                </option>
-                <option value="completed">
-                    Completed
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Writing Score out of 100</label>
-            <input class="form-control" type="number" name="reading_score"
-                placeholder="Enter your Reading score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Reading Score out of 100</label>
-            <input class="form-control" type="number" name="writing_score"
-                placeholder="Enter your Reading Score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
-        </div>
-    </form>
-    <h2>
-       The  prediction is {{results}}
-    </h2>
-   <body>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Student Score Prediction | <a href="https://github.com/alphacrypto246/Student-Score-Prediction" target="_blank">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        function toggleModal(show) {
+            const modal = document.getElementById('archModal');
+            if (show) {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function handleBackdropClick(e) {
+            if (e.target.id === 'archModal') {
+                toggleModal(false);
+            }
+        }
+
+        // Quick Preset autofill function
+        function fillPreset(type) {
+            const gender = document.getElementById('gender');
+            const ethnicity = document.getElementById('ethnicity');
+            const education = document.getElementById('parental_level_of_education');
+            const lunch = document.getElementById('lunch');
+            const testPrep = document.getElementById('test_preparation_course');
+            const reading = document.getElementById('reading_score');
+            const writing = document.getElementById('writing_score');
+
+            if (type === 1) { // High Achiever
+                gender.value = 'female';
+                ethnicity.value = 'group E';
+                education.value = "bachelor's degree";
+                lunch.value = 'standard';
+                testPrep.value = 'completed';
+                reading.value = 92;
+                writing.value = 95;
+            } else if (type === 2) { // Average
+                gender.value = 'male';
+                ethnicity.value = 'group C';
+                education.value = 'some college';
+                lunch.value = 'standard';
+                testPrep.value = 'none';
+                reading.value = 68;
+                writing.value = 65;
+            } else if (type === 3) { // Needs Support
+                gender.value = 'female';
+                ethnicity.value = 'group B';
+                education.value = 'high school';
+                lunch.value = 'free/reduced';
+                testPrep.value = 'none';
+                reading.value = 45;
+                writing.value = 48;
+            }
+        }
+    </script>
+</body>
 </html>

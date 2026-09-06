@@ -3,9 +3,684 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Pass Fail</title>
+    <title>EduPredict — Student Performance Intelligence</title>
+    <!-- Modern Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Exact Custom Palette */
+        :root {
+            --midnight: #06172E;      /* Primary Deep Background */
+            --blue-slate: #022C50;    /* Card & Surface */
+            --classic-blue: #0F4C81;  /* Structural Borders & Secondary */
+            --blue-gray: #58A1D3;     /* Primary Action & Highlights */
+            --powder-blue: #B3DEF8;   /* Soft Accents & Typography */
+            --white: #FFFFFF;
+            
+            --card-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(15, 76, 129, 0.4);
+            --glow-accent: 0 0 20px rgba(88, 161, 211, 0.25);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--midnight);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(15, 76, 129, 0.35) 0px, transparent 45%),
+                radial-gradient(at 85% 85%, rgba(2, 44, 80, 0.5) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Top Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 10%;
+            background: rgba(2, 44, 80, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(15, 76, 129, 0.6);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--classic-blue), var(--blue-gray));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(88, 161, 211, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.55rem 1.15rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(15, 76, 129, 0.7);
+            background: rgba(6, 23, 46, 0.4);
+            color: var(--powder-blue);
+        }
+
+        .nav-btn:hover {
+            background: var(--classic-blue);
+            color: var(--white);
+            border-color: var(--blue-gray);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--blue-gray), #458ec2);
+            border-color: var(--powder-blue);
+            color: var(--midnight);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(88, 161, 211, 0.35);
+        }
+
+        .nav-btn.primary:hover {
+            background: linear-gradient(135deg, var(--powder-blue), var(--blue-gray));
+            color: var(--midnight);
+            box-shadow: 0 6px 20px rgba(179, 222, 248, 0.45);
+        }
+
+        /* Hero Section */
+        .main-container {
+            flex: 1;
+            max-width: 960px;
+            width: 90%;
+            margin: 4rem auto 3rem;
+            text-align: center;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.4rem 1.1rem;
+            background: rgba(15, 76, 129, 0.35);
+            color: var(--powder-blue);
+            border: 1px solid var(--classic-blue);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-pill i {
+            color: var(--blue-gray);
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1.2rem;
+            line-height: 1.18;
+            letter-spacing: -0.8px;
+        }
+
+        h1 span {
+            color: var(--blue-gray);
+            background: linear-gradient(135deg, var(--white) 0%, var(--powder-blue) 60%, var(--blue-gray) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: var(--powder-blue);
+            opacity: 0.88;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .cta-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.85rem 2rem;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cta-primary {
+            background: linear-gradient(135deg, var(--blue-gray), #458ec2);
+            color: var(--midnight);
+            border: 1px solid var(--powder-blue);
+            box-shadow: 0 6px 20px rgba(88, 161, 211, 0.35);
+        }
+
+        .btn-cta-primary:hover {
+            background: linear-gradient(135deg, var(--powder-blue), var(--blue-gray));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(88, 161, 211, 0.5);
+        }
+
+        .btn-cta-secondary {
+            background: var(--blue-slate);
+            color: var(--powder-blue);
+            border: 1px solid var(--classic-blue);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cta-secondary:hover {
+            background: var(--classic-blue);
+            color: var(--white);
+            border-color: var(--blue-gray);
+            transform: translateY(-3px);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: var(--blue-slate);
+            border: 1px solid var(--classic-blue);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.75rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--blue-gray), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--blue-gray);
+            box-shadow: 0 20px 40px -10px rgba(2, 44, 80, 0.8), var(--glow-accent);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: rgba(15, 76, 129, 0.4);
+            border: 1px solid var(--classic-blue);
+            color: var(--blue-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .feature-card p {
+            font-size: 0.92rem;
+            color: var(--powder-blue);
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 23, 46, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background-color: var(--midnight);
+            border: 1px solid var(--classic-blue);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 860px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), var(--glow-accent);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--classic-blue);
+            background-color: var(--blue-slate);
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: rgba(15, 76, 129, 0.3);
+            border: 1px solid var(--classic-blue);
+            color: var(--powder-blue);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--blue-gray);
+            color: var(--midnight);
+            border-color: var(--powder-blue);
+        }
+
+        .modal-body {
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            text-align: center;
+            background-color: var(--midnight);
+        }
+
+        .svg-diagram-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .svg-diagram {
+            width: 100%;
+            max-width: 720px;
+            height: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 0.88rem;
+            color: var(--powder-blue);
+            opacity: 0.75;
+            border-top: 1px solid var(--classic-blue);
+            background-color: var(--midnight);
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--blue-gray);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--powder-blue);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 800px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                gap: 8px;
+            }
+            nav {
+                padding: 1rem 5%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+
+    <!-- Top Navigation -->
+    <nav>
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span>EduPredict</span>
+        </a>
+        <div class="nav-links">
+            <button class="nav-btn" onclick="toggleModal(true)">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Model Architecture</span>
+            </button>
+            <a href="https://github.com/alphacrypto246/Student-Score-Prediction" target="_blank" class="nav-btn">
+                <i class="fa-brands fa-github"></i>
+                <span>GitHub Repo</span>
+            </a>
+            <a href="/predictdata" class="nav-btn primary">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Predictor</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Hero -->
+    <div class="main-container">
+        <div class="badge-pill">
+            <i class="fa-solid fa-brain"></i>
+            <span>Machine Learning Pipeline & Inference</span>
+        </div>
+
+        <h1>
+            Predict Student Performance <br>
+            <span>With Intelligent Precision</span>
+        </h1>
+
+        <p class="subtitle">
+            An end-to-end Machine Learning solution that analyzes demographic factors, preparation backgrounds, and baseline reading/writing proficiencies to estimate mathematics performance.
+        </p>
+
+        <div class="cta-row">
+            <a href="/predictdata" class="btn-cta btn-cta-primary">
+                <span>Start Prediction</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <button class="btn-cta btn-cta-secondary" onclick="toggleModal(true)">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Explore Architecture</span>
+            </button>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+                <h3>Automated Pipeline</h3>
+                <p>Median/mode imputation, robust standard scaling, and one-hot encoding for all input features.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3>Tuned Regressors</h3>
+                <p>GridSearchCV hyperparameter tuning across CatBoost, XGBoost, Random Forest, and Linear Regression.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3>Instant Scoring</h3>
+                <p>Serialized preprocessor and model artifacts generate real-time math score estimates instantly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Architecture Modal with Vector Diagram -->
+    <div id="archModal" class="modal-overlay" onclick="handleBackdropClick(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-diagram-project" style="color: var(--blue-gray);"></i> Model Architecture Flowchart</h2>
+                <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="svg-diagram-container">
+                    <svg class="svg-diagram" viewBox="0 0 680 940" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#58A1D3"/>
+                            </marker>
+                        </defs>
+
+                        <style>
+                            .box { fill: #022C50; stroke: #0F4C81; stroke-width: 1.5; rx: 8; ry: 8; }
+                            .box-highlight { fill: #022C50; stroke: #58A1D3; stroke-width: 2; rx: 8; ry: 8; }
+                            .box-green { fill: #022C50; stroke: #58A1D3; stroke-width: 1.5; rx: 8; ry: 8; }
+                            .txt { fill: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; }
+                            .txt-sub { fill: #B3DEF8; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
+                            .edge { stroke: #58A1D3; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+                            .edge-long { stroke: #0F4C81; stroke-width: 1.75; fill: none; marker-end: url(#arrow); stroke-dasharray: 4 3; }
+                            .edge-lbl-bg { fill: #06172E; stroke: #0F4C81; stroke-width: 1; rx: 6; }
+                            .edge-lbl { fill: #B3DEF8; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+                        </style>
+
+                        <!-- 1. Raw Dataset -->
+                        <rect x="250" y="20" width="180" height="38" class="box"/>
+                        <text x="340" y="39" class="txt">Raw Dataset stud.xlsx</text>
+
+                        <!-- Line to Data Ingestion -->
+                        <path d="M 340 58 L 340 90" class="edge"/>
+
+                        <!-- 2. Data Ingestion Component -->
+                        <rect x="230" y="90" width="220" height="38" class="box"/>
+                        <text x="340" y="109" class="txt">Data Ingestion Component</text>
+
+                        <!-- Ingestion Branches -->
+                        <path d="M 280 128 L 280 170 L 210 170 L 210 185" class="edge"/>
+                        <!-- Split Badge -->
+                        <rect x="235" y="142" width="75" height="18" class="edge-lbl-bg"/>
+                        <text x="272" y="151" class="edge-lbl">Splits 80/20</text>
+
+                        <path d="M 400 128 L 400 170 L 490 170 L 490 185" class="edge"/>
+
+                        <!-- 3. Artifacts: train/test and raw.csv -->
+                        <rect x="120" y="185" width="180" height="42" class="box"/>
+                        <text x="210" y="206" class="txt">artifacts/train.csv &amp; test.csv</text>
+
+                        <rect x="420" y="185" width="140" height="42" class="box"/>
+                        <text x="490" y="206" class="txt">artifacts/raw.csv</text>
+
+                        <!-- Line to Data Transformation -->
+                        <path d="M 210 227 L 210 260 L 340 260 L 340 275" class="edge"/>
+
+                        <!-- 4. Data Transformation Component -->
+                        <rect x="220" y="275" width="240" height="38" class="box"/>
+                        <text x="340" y="294" class="txt">Data Transformation Component</text>
+
+                        <!-- Split to Numerical and Categorical -->
+                        <path d="M 270 313 L 270 340 L 190 340 L 190 355" class="edge"/>
+                        <path d="M 410 313 L 410 340 L 490 340 L 490 355" class="edge"/>
+
+                        <!-- Numerical Pipeline Box -->
+                        <rect x="90" y="355" width="200" height="46" class="box"/>
+                        <text x="190" y="371" class="txt-sub">SimpleImputer + StandardScaler</text>
+                        <text x="190" y="388" class="txt">Numerical Pipeline</text>
+
+                        <!-- Categorical Pipeline Box -->
+                        <rect x="390" y="355" width="200" height="46" class="box"/>
+                        <text x="490" y="371" class="txt-sub">SimpleImputer + OneHotEncoder</text>
+                        <text x="490" y="388" class="txt">Categorical Pipeline</text>
+
+                        <!-- Join to ColumnTransformer -->
+                        <path d="M 190 401 L 190 425 L 310 425 L 310 440" class="edge"/>
+                        <path d="M 490 401 L 490 425 L 370 425 L 370 440" class="edge"/>
+
+                        <!-- 5. ColumnTransformer Object -->
+                        <rect x="240" y="440" width="200" height="38" class="box-highlight"/>
+                        <text x="340" y="459" class="txt" fill="#B3DEF8">ColumnTransformer Object</text>
+
+                        <!-- Long path from ColumnTransformer down to preprocessor.pkl -->
+                        <path d="M 260 478 L 260 720 L 220 720 L 220 740" class="edge-long"/>
+
+                        <!-- Path to Transformed Arrays -->
+                        <path d="M 420 478 L 420 500 L 490 500 L 490 515" class="edge"/>
+
+                        <!-- 6. Transformed Arrays -->
+                        <rect x="390" y="515" width="200" height="44" class="box"/>
+                        <text x="490" y="531" class="txt">Transformed Arrays</text>
+                        <text x="490" y="546" class="txt-sub">train_arr &amp; test_arr</text>
+
+                        <!-- Line to Model Trainer -->
+                        <path d="M 490 559 L 490 585" class="edge"/>
+
+                        <!-- 7. Model Trainer Component -->
+                        <rect x="390" y="585" width="200" height="38" class="box"/>
+                        <text x="490" y="604" class="txt">Model Trainer Component</text>
+
+                        <!-- Line to Model Evaluation with GridSearchCV Tuning label -->
+                        <path d="M 490 623 L 490 675" class="edge"/>
+                        <rect x="420" y="638" width="140" height="18" class="edge-lbl-bg"/>
+                        <text x="490" y="647" class="edge-lbl">GridSearchCV Tuning</text>
+
+                        <!-- 8. Model Evaluation Benchmarking -->
+                        <rect x="380" y="675" width="220" height="38" class="box"/>
+                        <text x="490" y="694" class="txt">Model Evaluation Benchmarking</text>
+
+                        <!-- Line to Select Best Regressor Model -->
+                        <path d="M 490 713 L 490 740" class="edge"/>
+
+                        <!-- 9. Select Best Regressor Model -->
+                        <rect x="380" y="740" width="220" height="38" class="box"/>
+                        <text x="490" y="759" class="txt">Select Best Regressor Model</text>
+
+                        <!-- Line to artifacts/model.pkl -->
+                        <path d="M 490 778 L 490 805" class="edge"/>
+
+                        <!-- 10. Saved Model and Preprocessor Artifacts -->
+                        <rect x="140" y="740" width="160" height="38" class="box-green"/>
+                        <text x="220" y="759" class="txt" fill="#B3DEF8">artifacts/preprocessor.pkl</text>
+
+                        <rect x="410" y="805" width="160" height="38" class="box-green"/>
+                        <text x="490" y="824" class="txt" fill="#B3DEF8">artifacts/model.pkl</text>
+
+                        <!-- User Input Box on Left -->
+                        <rect x="40" y="805" width="170" height="38" class="box"/>
+                        <text x="125" y="824" class="txt">User Input via Web UI</text>
+
+                        <!-- Paths entering CustomData / Predict Pipeline -->
+                        <path d="M 125 843 L 125 870 L 250 870 L 250 885" class="edge"/>
+                        <path d="M 220 778 L 220 860 L 320 860 L 320 885" class="edge"/>
+                        <path d="M 490 843 L 490 870 L 390 870 L 390 885" class="edge"/>
+
+                        <!-- 11. CustomData / Predict Pipeline -->
+                        <rect x="220" y="885" width="240" height="42" class="box-highlight"/>
+                        <text x="340" y="906" class="txt" fill="#B3DEF8">CustomData / Predict Pipeline</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Student Score Prediction | <a href="https://github.com/alphacrypto246/Student-Score-Prediction" target="_blank">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        function toggleModal(show) {
+            const modal = document.getElementById('archModal');
+            if (show) {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function handleBackdropClick(e) {
+            if (e.target.id === 'archModal') {
+                toggleModal(false);
+            }
+        }
+    </script>
 </body>
 </html>
