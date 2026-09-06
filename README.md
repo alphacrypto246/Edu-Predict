@@ -49,7 +49,7 @@ In modern education, understanding the factors that influence academic performan
 
 ## 🎯 Problem Statement
 
-The objective is to predict a student's **Math Score** ($0 - 100$) by analyzing:
+The objective is to predict a student's **Math Score** (0 - 100) by analyzing:
 1. Demographic attributes (Gender, Ethnicity).
 2. Socioeconomic factors (Parental Level of Education, Lunch Type).
 3. Academic preparation (Test Preparation Course completion).
