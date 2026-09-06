@@ -162,7 +162,7 @@ mlproject/
 - **File**: `src/components/data_ingestions.py`
 - Loads raw data from `notebook/data/stud.xlsx`.
 - Validates directories and saves `raw.csv` under `artifacts/`.
-- Performs an $80/20$ stratified train-test split (`random_state=42`) and outputs `train.csv` and `test.csv`.
+- Performs an 80/20 stratified train-test split (`random_state=42`) and outputs `train.csv` and `test.csv`.
 
 ### 2. Data Transformation
 - **File**: `src/components/data_transformation.py`
@@ -174,7 +174,7 @@ mlproject/
 
 ### 3. Model Training & Hyperparameter Tuning
 - **File**: `src/components/model_trainer.py`
-- Evaluates multiple regression algorithms with `GridSearchCV` ($3$-fold cross-validation, $R^2$ scoring):
+- Evaluates multiple regression algorithms with `GridSearchCV` (3-fold cross-validation, R^2 scoring):
   - **Decision Tree Regressor** (criterion, max_depth, min_samples_split, min_samples_leaf)
   - **Random Forest Regressor** (n_estimators, max_depth, min_samples_split, min_samples_leaf)
   - **Gradient Boosting Regressor** (n_estimators, learning_rate, max_depth, subsample)
@@ -182,7 +182,7 @@ mlproject/
   - **XGBoost Regressor** (n_estimators, learning_rate, max_depth, subsample)
   - **CatBoost Regressor** (iterations, depth, learning_rate)
   - **AdaBoost Regressor** (n_estimators, learning_rate)
-- Selects the top-performing model exceeding the score threshold ($R^2 \ge 0.6$) and serializes it to `artifacts/model.pkl`.
+- Selects the top-performing model exceeding the score threshold (R^2 \ge 0.6) and serializes it to `artifacts/model.pkl`.
 
 ### 4. Prediction Pipeline
 - **File**: `src/pipeline/predict_pipeline.py`
